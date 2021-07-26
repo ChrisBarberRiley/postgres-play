@@ -18,6 +18,25 @@ const TodoList: React.FC = () => {
     fetchTodos();
   }, []);
 
+  // Much cleaner ways to do this, it was a practice project,
+  // would naturally place item into it's own component and throw axios into
+  // it's own hook to avoid repetition etc.
+  const toggleTodo = async (
+    id: Number,
+    status: boolean,
+    description: string,
+  ) => {
+    const result = await axios.put(
+      `http://localhost:5000/todos/${id}`,
+      {
+        done: status,
+        description,
+      },
+      { headers: { 'Content-Type': 'application/json' } },
+    );
+    console.log('result', result);
+  };
+
   return (
     <List>
       {todos?.length ? (
@@ -26,7 +45,11 @@ const TodoList: React.FC = () => {
             <Icon name="caret right" />
             <List.Content>
               <List.Header>{description}</List.Header>
-              <List.Description>Status: {done}</List.Description>
+              <List.Description
+                onClick={() => toggleTodo(id, !done, description)}
+              >
+                Status: {done ? <>Complete</> : <>Pending</>}
+              </List.Description>
             </List.Content>
           </List.Item>
         ))
